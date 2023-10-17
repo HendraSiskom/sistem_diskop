@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class WilayahController extends Controller
 {
@@ -17,7 +18,7 @@ class WilayahController extends Controller
     public function index()
     {
         $data = [
-            'daftar_kd_wil' => DB::table('kd_wilayah')->where(['status' => '0'])->orderBy('created_at', 'ASC')->get(),
+            'daftar_kd_wil' => DB::table('kd_wilayah')->orderBy('status', 'ASC')->orderBy('created_at', 'ASC')->get(),
         ];
         return view('master_data.wilayah.index')->with($data);
     }
@@ -40,7 +41,37 @@ class WilayahController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $validasi = Validator::make($request->all(), [
+                'id_kd_wilayah' => 'required|unique:wilayah',
+                'nm_wilayah'    => 'required|unique:wilayah',
+            ], [
+                'id_kd_wilayah.required'        => 'Kode Wilayah Tidak Boleh Kosong.',
+                'id_kd_wilayah.unique'          => 'Kode Wilayah Sudah Terdaftar.',
+                'nm_wilayah.required'           => 'Nama Wilayah Tidak Boleh Kosong.',
+                'nm_wilayah.unique'             => 'Nama Wilayah Sudah Terdaftar.',
+            ]);
+
+            if ($validasi->fails()) {
+                return response()->json(['errors' => $validasi->errors()]);
+            } else {
+                DB::table('wilayah')->insert([
+                    'id_kd_wilayah'    => $request['id_kd_wilayah'],
+                    'nm_wilayah'       => $request['nm_wilayah'],
+                    'status'     => '0',
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+
+                DB::table('kd_wilayah')->where(['id' => $request['id_kd_wilayah']])->update([
+                    'status'       => '1',
+                ]);
+                DB::commit();
+                return response()->json(['success' => 'Data Berhasil Disimpan']);
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+        }
     }
 
     /**
@@ -91,7 +122,29 @@ class WilayahController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $validasi = Validator::make($request->all(), [
+                'nm_wilayah'    => "required|unique:wilayah,nm_wilayah,$id",
+            ], [
+                'nm_wilayah.required'           => 'Nama Wilayah Tidak Boleh Kosong.',
+                'nm_wilayah.unique'             => 'Nama Wilayah Sudah Terdaftar.',
+            ]);
+
+            if ($validasi->fails()) {
+                return response()->json(['errors' => $validasi->errors()]);
+            } else {
+                DB::table('wilayah')->where(['id' => $id])->update([
+                    'nm_wilayah'       => $request['nm_wilayah'],
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+                
+                DB::commit();
+                return response()->json(['success' => 'Data Berhasil Disimpan']);
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+        }
     }
 
     /**
@@ -100,8 +153,24 @@ class WilayahController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $dataIdWil = DB::table('wilayah')->where(['id' => $request->id])->first();
+            DB::table('kd_wilayah')->where(['id' => $dataIdWil->id_kd_wilayah])->update([
+                'status'       => '0',
+            ]);
+            DB::table('wilayah')->where(['id' => $request->id])->delete();
+            DB::commit();
+            return response()->json([
+                'message' => '1'
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => '0'
+            ]);
+        }
     }
 }

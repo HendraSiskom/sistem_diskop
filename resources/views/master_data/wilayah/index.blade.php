@@ -38,12 +38,13 @@
             </div>
             <div class="modal-body">
                 <div class="alert alert-danger d-none"></div>
-                <div class="mb-3">
+                <div class="mb-3 ">
                     <label for="id_kd_wil" class="form-label">Pilih Kode Wilayah</label>
                     <select class="form-control select2-modal" id="id_kd_wil" name="id_kd_wil">
                         <option value=""></option>
                         @foreach ($daftar_kd_wil as $value)
-                            <option value="{{ $value->id }}" {{ old('id_kd_wil') == $value->id ? 'selected' : '' }}>
+                            <option value="{{ $value->id }}"  {{ old('id_kd_wil') == $value->id ? 'selected' : '' }}
+                                {{ $value->status == '1' ? 'disabled' : '' }}>
                                 {{ $value->kode }}
                             </option>
                         @endforeach

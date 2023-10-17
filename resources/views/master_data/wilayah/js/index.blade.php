@@ -52,6 +52,7 @@
     function functionCreateData() {
         $('#standard-modal').modal('show');
         $('#modal-title').html('Tambah Data');
+        $('#id_kd_wil').prop('disabled', false);
     }
 
     //untuk membersihkan data yang sudah ditutup
@@ -76,6 +77,7 @@
                 $('#standard-modal').modal('show');
                 $('#modal-title').html('Edit Data');
                 $('#id_kd_wil').val(response.result.id_kd_wilayah).change();
+                $('#id_kd_wil').prop('disabled', true);
                 $('#nm_wil').val(response.result.nm_wilayah);
                 id_s = id
             }
@@ -87,10 +89,10 @@
     $('#simpan-data').click(function() {
         $('#simpan-data').prop('disabled', true);
         if (id_s == '') {
-            var var_url = "{{ route('kd_wilayah.store') }}";
+            var var_url = "{{ route('wilayah.store') }}";
             var var_type = "POST";
         } else {
-            let url = '{{ route("kd_wilayah.update", ":id") }}';
+            let url = '{{ route("wilayah.update", ":id") }}';
             var_url = url.replace(':id', id_s);
             var var_type = "PUT";
         }
@@ -118,7 +120,8 @@
             type: var_type ,
             dataType: 'json',
             data: {
-                kode: $('#kode').val(),
+                id_kd_wilayah: $('#id_kd_wil').val(),
+                nm_wilayah: $('#nm_wil').val(),
             },
             success: function(response) {
                 if (response.errors) {
@@ -145,7 +148,7 @@
     function functionDeleteData(id) {
         let tanya = confirm('Apakah anda yakin untuk menghapus data ini');
         if (tanya == true) {
-            let url = '{{ route("kd_wilayah.destroy", ":id") }}';
+            let url = '{{ route("wilayah.destroy", ":id") }}';
                 url = url.replace(':id', id);
                 $.ajax({
                     url: url,
