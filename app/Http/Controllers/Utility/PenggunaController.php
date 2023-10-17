@@ -100,8 +100,21 @@ class PenggunaController extends Controller
         )->get();
 
         return DataTables::of($data)->addIndexColumn()->addColumn('aksi', function ($row) {
-            $btn = '<a href="' . route("pengguna.edit", Crypt::encryptString($row->id)) . '" class="btn btn-warning btn-xs" style="margin-right:4px" title="Edit Data"><i class="fas fa-edit"></i></a>';
-            $btn .= '<a href="javascript:void(0);" onclick="hapusPengguna(\'' . $row->id . '\', \'' . Auth::user()->id . '\');" data-id="\'' . $row->id . '\'" class="btn btn-danger btn-xs" style="margin-right:4px" title="Hapus Data"><i class="fas fa-trash-alt"></i></a>';
+            if ($row->status_aktif == '1') {
+                $btn = '<div class="form-check form-switch">
+                    <a href="' . route("pengguna.edit", Crypt::encryptString($row->id)) . '" class="btn btn-warning btn-xs" style="margin-right:4px" title="Edit Data"><i class="fas fa-edit"></i></a>
+                    <a href="javascript:void(0);" onclick="hapusPengguna(\'' . $row->id . '\', \'' . Auth::user()->id . '\');" data-id="\'' . $row->id . '\'" class="btn btn-danger btn-xs" style="margin-right:4px" title="Hapus Data"><i class="fas fa-trash-alt"></i></a>    
+                    <input type="checkbox" class="form-check-input" id="' . $row->id . '" onChange="ubahStatus(\'' . $row->id . '\', \'' . $row->status_aktif . '\');" checked>
+                    <label class="custom-control-label" for="' . $row->id . '"></label>
+                    </div>';
+            } else {
+                $btn = '<div class="form-check form-switch">
+                    <a href="' . route("pengguna.edit", Crypt::encryptString($row->id)) . '" class="btn btn-warning btn-xs" style="margin-right:4px" title="Edit Data"><i class="fas fa-edit"></i></a>
+                    <a href="javascript:void(0);" onclick="hapusPengguna(\'' . $row->id . '\', \'' . Auth::user()->id . '\');" data-id="\'' . $row->id . '\'" class="btn btn-danger btn-xs" style="margin-right:4px" title="Hapus Data"><i class="fas fa-trash-alt"></i></a>    
+                    <input type="checkbox" class="form-check-input" id="' . $row->id . '" onChange="ubahStatus(\'' . $row->id . '\', \'' . $row->status_aktif . '\');">
+                    <label class="custom-control-label" for="' . $row->id . '"></label>
+                    </div>';
+            }
             return $btn;
         })->rawColumns(['aksi'])->make(true);
     }
@@ -142,6 +155,7 @@ class PenggunaController extends Controller
             DB::table('pengguna')->where(['id' => $id])->update([
                 'username' => $input['username'],
                 'nama' => $input['nama'],
+                'password' => Hash::make($input['password']),
                 'wilayah' => $request['wilayah'],
                 'role' => $request['peran'],
                 'updated_at' => date('Y-m-d H:i:s'),
@@ -156,6 +170,40 @@ class PenggunaController extends Controller
             return redirect()->back()->withInput();
         }
     }
+
+    public function updateStatus(Request $request)
+    {
+        $id = $request->id;
+        $status_aktif = $request->status_aktif;
+
+        DB::beginTransaction();
+        try {
+            if ($status_aktif == '1') {
+                DB::table('pengguna')->where(['id' => $id])
+                    ->update([
+                        'status_aktif' => '0',
+                    ]);
+                DB::commit();
+                return response()->json([
+                    'message' => '1',
+                ]);
+            } else {
+                DB::table('pengguna')->where(['id' => $id])
+                    ->update([
+                        'status_aktif' => '1',
+                    ]);
+                DB::commit();
+                return response()->json([
+                    'message' => '2',
+                ]);
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => '0'
+            ]);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      *
@@ -166,9 +214,15 @@ class PenggunaController extends Controller
     {
         try {
             DB::beginTransaction();
-            // $dataCek = DB::table('wilayah')->where(['id' => $request->id])->first();
+            $dataCek = DB::table('pengguna')->where(['id' => $id])->first();
             DB::table('pengguna')->where(['id' => $id])->delete();
             DB::table('pengguna_peran')->where(['id_pengguna' => $id])->delete();
+            $count = DB::table('pengguna')->where(['wilayah' => $dataCek->wilayah])->count();
+            if ($count < 1) {
+                DB::table('wilayah')->where(['id' => $dataCek->wilayah])->update([
+                    'status'       => '0',
+                ]);
+            }
             DB::commit();
             return response()->json([
                 'message' => '1'

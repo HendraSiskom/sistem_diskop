@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth', 'auth.session'], function () {
         // pengguna
         Route::resource('pengguna', PenggunaController::class);
         Route::post('pengguna/load_data', [PenggunaController::class, 'load_data'])->name('pengguna.load_data');
+        Route::post('pengguna/update-status', [PenggunaController::class, 'updateStatus'])->name('pengguna.update_status');
 
         // peran
         Route::resource('peran', PeranController::class);

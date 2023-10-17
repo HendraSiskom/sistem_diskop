@@ -36,6 +36,25 @@
                             @enderror
                         </div>
                     </div>
+
+                    <div class="row mb-2">
+                        <label for="password" class="col-3 col-xl-3 col-form-label">Password</label>
+                        <div class="col-9 col-xl-9">
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Silahkan isi dengan Password" oninvalid="this.setCustomValidity('Password Tidak Boleh Kosong')"  oninput="setCustomValidity('')" required>
+                            @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <label for="confirmation_password" class="col-3 col-xl-3 col-form-label">Konfirmasi Password</label>
+                        <div class="col-9 col-xl-9">
+                            <input type="password" class="form-control @error('confirmation_password') is-invalid @enderror" id="confirmation_password" name="confirmation_password" placeholder="Silahkan isi dengan Konfirmasi Password" oninvalid="this.setCustomValidity('Konfirmasi Password Tidak Boleh Kosong')"  oninput="setCustomValidity('')" required>
+                            @error('confirmation_password')
+                            <div class="invalid-feedback">konfirmasi password dan password tidak sama.</div>
+                            @enderror
+                        </div>
+                    </div>
                     <div class="row mb-2">
                         <label for="wilayah" class="col-3 col-xl-3 col-form-label">Wilayah</label>
                         <div class="col-9 col-xl-9">
