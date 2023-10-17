@@ -85,8 +85,8 @@
                     
                     <div class="justify-content-end row" style="float: right;"> 
                         <div class="col-12 col-xl-12">
-                            <button class="btn btn-primary waves-effect waves-light">Simpan</button>
-                            <a href="{{ route('pengguna.index') }}" class="btn btn-warning btn-md">Kembali</a>
+                            <button class="btn btn-primary waves-effect rounded-pill waves-light">Simpan</button>
+                            <a href="{{ route('pengguna.index') }}" class="btn btn-warning rounded-pill btn-md">Kembali</a>
                         </div>
                     </div>
                 </form>

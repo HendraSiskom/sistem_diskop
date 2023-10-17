@@ -20,6 +20,13 @@
                 </li>
 
                 <li>
+                    <a href="{{ route('peran.index') }}">
+                        <i class="mdi mdi-view-dashboard-outline"></i>
+                        <span> peran </span>
+                    </a>
+                </li>
+
+                <li>
                     <a href="{{ route('kd_wilayah.index') }}">
                         <i class="mdi mdi-view-dashboard-outline"></i>
                         <span> Kode wilayah </span>

@@ -1,5 +1,5 @@
 @extends('layouts.template')
-@section('title', 'Pengguna | ?')
+@section('title', 'Peran | ?')
 
 @section('content')
 <div class="row">
@@ -12,19 +12,17 @@
             </div>
             @endif
             <div class="card-header" style="font-size: 18px; color: black">
-                List Data Pengguna
-                <a href="{{ route('pengguna.create') }}" class="btn btn-primary width-md rounded-pill waves-effect waves-light" style="float: right;">+ Tambah</a>
+                List Data Peran
+                <a href="{{ route('peran.create') }}" class="btn btn-primary width-md rounded-pill waves-effect waves-light" style="float: right;">+ Tambah</a>
             </div>
             <div class="card-body">
-                <table id="penggunaTable" class="table table-bordered dt-responsive table-responsive nowrap">
+                <table id="peranTable" class="table table-bordered dt-responsive table-responsive nowrap">
                     <thead>
                         <tr>
                             <th style="width: 5px">No</th>
                             <th style="width: 10px">Aksi</th>
-                            <th>Username</th>
-                            <th>Nama</th>
-                            <th>Kode Wilayah</th>
-                            <th>Wilayah</th>
+                            <th>Kode</th>
+                            <th>Nama Peran</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,5 +35,5 @@
 @endsection
 
 @section('js')
-    @include('utility.pengguna.js.index')
+    @include('utility.peran.js.index')
 @endsection

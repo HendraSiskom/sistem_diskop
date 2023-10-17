@@ -36,11 +36,42 @@
                     name: 'nama',
                 },
                 {
+                    data: 'kode',
+                    name: 'kode',
+                },
+                {
                     data: 'wilayah',
                     name: 'wilayah',
                 }
             ],
         });
     });
-
+    function hapusPengguna(id, user_id) {
+        if (id == user_id) {
+            alert('Dilarang menghapus data diri sendiri!!!');
+            return;
+        }
+        var r = confirm("Hapus?");
+        if (r == true) {
+        let url = '{{ route("pengguna.destroy", ":id") }}';
+            url = url.replace(':id', id);
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                data: {
+                    id: id,
+                },
+                success: function(data) {
+                    if (data.message == '1') {
+                        alert('Data berhasil dihapus!');
+                        window.location.reload();
+                    } else {
+                        alert('Data gagal dihapus!');
+                    }
+                }
+            });
+        } else {
+            return false;
+        }
+    }
 </script>

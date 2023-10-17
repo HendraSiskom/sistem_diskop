@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Utility\PenggunaController;
+use App\Http\Controllers\Utility\PeranController;
 use App\Http\Controllers\MasterData\KdWilayahController;
 use App\Http\Controllers\MasterData\WilayahController;
 
@@ -30,6 +31,10 @@ Route::group(['middleware' => 'auth', 'auth.session'], function () {
         // pengguna
         Route::resource('pengguna', PenggunaController::class);
         Route::post('pengguna/load_data', [PenggunaController::class, 'load_data'])->name('pengguna.load_data');
+
+        // peran
+        Route::resource('peran', PeranController::class);
+        Route::post('peran/load_data', [PeranController::class, 'load_data'])->name('peran.load_data');
     });
 
     // master data

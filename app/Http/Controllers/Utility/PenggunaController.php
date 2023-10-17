@@ -31,9 +31,9 @@ class PenggunaController extends Controller
     public function create()
     {
         $data = [
-            'daftar_kd_wil'  => DB::table('wilayah')->join('kd_wilayah', function ($join){
-                $join->on('wilayah.id_kd_wilayah', '=', 'kd_wilayah.id');
-            })->where(['wilayah.status' => '0'])->get(),
+            'daftar_kd_wil'  => DB::table('wilayah as a')->join('kd_wilayah as b', function ($join){
+                $join->on('a.id_kd_wilayah', '=', 'b.id');
+            })->orderBy('a.created_at', 'ASC')->select('a.id', 'a.nm_wilayah', 'b.kode', 'a.created_at')->get(),
             'daftar_peran'  => DB::table('peran')->get(),
         ];
 
@@ -49,7 +49,7 @@ class PenggunaController extends Controller
     public function store(PenggunaRequest $request)
     {
         $input = array_map('htmlentities', $request->validated());
-        // try {
+        try {
             DB::beginTransaction();
             $id = DB::table('pengguna')->insertGetId([
                 'username' => $input['username'],
@@ -60,17 +60,21 @@ class PenggunaController extends Controller
                 'status_aktif' => '0',
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
-            // DB::table('pengguna_peran1')->insert([
-            //     'id_pengguna' => $id,
-            //     'id_peran' => $request['peran'],
-            // ]);
+            DB::table('pengguna_peran')->insert([
+                'id_pengguna' => $id,
+                'id_peran' => $request['peran'],
+            ]);
+
+            DB::table('wilayah')->where(['id' => $request['wilayah']])->update([
+                'status'       => '1',
+            ]);
 
             DB::commit();
             return redirect()->route('pengguna.index')->withStatus('Data Berhasil Disimpan');
-        // } catch (\Throwable $th) {
-        //     DB::rollBack();
-        //     return redirect()->back()->withInput();
-        // }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->withInput();
+        }
     }
 
     /**
@@ -89,8 +93,14 @@ class PenggunaController extends Controller
     {
         $data = DB::table('pengguna')->get();
 
+        $data = DB::table('pengguna as a')->Select('a.*',
+            DB::raw("(select nm_wilayah from wilayah b where a.wilayah = b.id) as wilayah"),
+            DB::raw("(select kode from kd_wilayah b JOIN wilayah c on b.id = c.id_kd_wilayah where c.id =a.wilayah) as kode"),
+            DB::raw("(select nm_role from peran b where a.role = b.id) as jabatan")
+        )->get();
+
         return DataTables::of($data)->addIndexColumn()->addColumn('aksi', function ($row) {
-            $btn = '<a href="' . route("pengguna.edit", Crypt::encryptString($row->id)) . '" class="btn btn-success btn-xs" style="margin-right:4px" title="Edit Data"><i class="fas fa-edit"></i></a>';
+            $btn = '<a href="' . route("pengguna.edit", Crypt::encryptString($row->id)) . '" class="btn btn-warning btn-xs" style="margin-right:4px" title="Edit Data"><i class="fas fa-edit"></i></a>';
             $btn .= '<a href="javascript:void(0);" onclick="hapusPengguna(\'' . $row->id . '\', \'' . Auth::user()->id . '\');" data-id="\'' . $row->id . '\'" class="btn btn-danger btn-xs" style="margin-right:4px" title="Hapus Data"><i class="fas fa-trash-alt"></i></a>';
             return $btn;
         })->rawColumns(['aksi'])->make(true);
@@ -104,7 +114,17 @@ class PenggunaController extends Controller
      */
     public function edit($id)
     {
-        //
+        $id = Crypt::decryptString($id);
+        $pengguna = DB::table('pengguna')->where(['id' => $id])->first();
+        $data = [
+            'data_pengguna' => $pengguna,
+            'daftar_peran' => DB::table('peran')->get(),
+            'daftar_kd_wil'  => DB::table('wilayah as a')->join('kd_wilayah as b', function ($join){
+                $join->on('a.id_kd_wilayah', '=', 'b.id');
+            })->orderBy('a.created_at', 'ASC')->select('a.id', 'a.nm_wilayah', 'b.kode', 'a.created_at')->get(),
+        ];
+
+        return view('utility.pengguna.edit')->with($data);
     }
 
     /**
@@ -114,11 +134,28 @@ class PenggunaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PenggunaRequest $request, $id)
     {
-        //
+        $input = array_map('htmlentities', $request->validated());
+        try {
+            DB::beginTransaction();
+            DB::table('pengguna')->where(['id' => $id])->update([
+                'username' => $input['username'],
+                'nama' => $input['nama'],
+                'wilayah' => $request['wilayah'],
+                'role' => $request['peran'],
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+            DB::table('pengguna_peran')->where(['id_pengguna' => $id])->update([
+                'id_peran' => $request['peran'],
+            ]);
+            DB::commit();
+            return redirect()->route('pengguna.index')->withStatus('Data Berhasil Disimpan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->withInput();
+        }
     }
-
     /**
      * Remove the specified resource from storage.
      *
@@ -127,6 +164,20 @@ class PenggunaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            // $dataCek = DB::table('wilayah')->where(['id' => $request->id])->first();
+            DB::table('pengguna')->where(['id' => $id])->delete();
+            DB::table('pengguna_peran')->where(['id_pengguna' => $id])->delete();
+            DB::commit();
+            return response()->json([
+                'message' => '1'
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => '0'
+            ]);
+        }
     }
 }
