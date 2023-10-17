@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Utility\PenggunaController;
 use App\Http\Controllers\Utility\PeranController;
+use App\Http\Controllers\Utility\ProfilController;
 use App\Http\Controllers\MasterData\KdWilayahController;
 use App\Http\Controllers\MasterData\WilayahController;
 
@@ -36,6 +37,9 @@ Route::group(['middleware' => 'auth', 'auth.session'], function () {
         // peran
         Route::resource('peran', PeranController::class);
         Route::post('peran/load_data', [PeranController::class, 'load_data'])->name('peran.load_data');
+
+        //profil
+        Route::resource('profil', ProfilController::class);
     });
 
     // master data

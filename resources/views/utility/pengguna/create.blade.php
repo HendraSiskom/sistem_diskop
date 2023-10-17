@@ -1,5 +1,5 @@
 @extends('layouts.template')
-@section('title', 'Tambah Pengguna | SIMAKDA')
+@section('title', 'Tambah Pengguna | ?')
 
 @section('content')
 <div class="row">

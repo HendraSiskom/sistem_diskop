@@ -15,6 +15,11 @@
                 </div>
                 <div class="dropdown-divider"></div>
                 <!-- item-->
+                <a href="{{ route('profil.edit', Crypt::encryptString(Auth::user()->id)) }}" class="dropdown-item notify-item">
+                    <i class="fe-user"></i>
+                    <span>Profil</span>
+                </a>
+                <!-- item-->
                 <a href="{{ route('logout') }}" class="dropdown-item notify-item">
                     <i class="fe-log-out"></i>
                     <span>Logout</span>
