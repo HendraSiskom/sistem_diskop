@@ -39,6 +39,13 @@
                         <span> wilayah </span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="{{ route('reporting_output.index') }}">
+                        <i class="mdi mdi-view-dashboard-outline"></i>
+                        <span> Reporting Output </span>
+                    </a>
+                </li>
             </ul>
         </div>
         <!-- End Sidebar -->

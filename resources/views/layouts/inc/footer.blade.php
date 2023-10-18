@@ -8,7 +8,7 @@
             </div>
             <div class="col-md-6">
                 <div class="text-md-end footer-links d-none d-sm-block">
-                    Dikembangkan oleh PT.MSM
+                    Dikembangkan oleh PT.Cemerlang Sumber Abadi
                 </div>
             </div>
         </div>

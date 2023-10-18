@@ -7,6 +7,7 @@ use App\Http\Controllers\Utility\PeranController;
 use App\Http\Controllers\Utility\ProfilController;
 use App\Http\Controllers\MasterData\KdWilayahController;
 use App\Http\Controllers\MasterData\WilayahController;
+use App\Http\Controllers\ReportingOutputController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,4 +55,6 @@ Route::group(['middleware' => 'auth', 'auth.session'], function () {
     });
 
 
+    // reporting output
+    Route::resource('reporting_output', ReportingOutputController::class);
 });
