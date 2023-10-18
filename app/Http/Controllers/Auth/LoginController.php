@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 class LoginController extends Controller
@@ -35,12 +36,23 @@ class LoginController extends Controller
             'username' => ['required'],
             'password' => ['required'],
         ]);
-
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+
+            $user = DB::table('pengguna')
+                ->where(['username' => $request->username])
+                ->first();
+
+            if ($user->status_aktif == 1) {
+                $request->session()->regenerate();
             return redirect()->route('home');
+            } else {
+                Auth::logout();
+                request()->session()->invalidate();
+                return back()->withErrors(['msg' => 'Akun Anda Tidak Aktif, Hubungi Admin!']);
+            }
         } else {
-            return Redirect::back()->withErrors(['msg' => 'Username atau Password Anda Salah!']);
+            return back()->withErrors(['msg' => 'Username atau Password Anda Salah!']);
         }
     }
 
