@@ -58,7 +58,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" id="simpan-data" class="btn btn-primary rounded-pill">Simpan</button>
+                <button type="button" id="simpan-data" class="btn btn-primary rounded-pill"></button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

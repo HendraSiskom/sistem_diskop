@@ -79,6 +79,10 @@ class KdWilayahController extends Controller
                 $btn = '<a href="javascript:void(0);" onclick="functionShowData(\'' . $row->id . '\');" class="btn btn-warning btn-xs" style="margin-right:4px" title="Edit Data"><i class="fas fa-edit"></i></a>';
                 $btn .= '<a href="javascript:void(0);" onclick="functionDeleteData(\'' . $row->id . '\');" class="btn btn-danger btn-xs" style="margin-right:4px" title="Hapus Data"><i class="fas fa-trash-alt"></i></a>';
                 return $btn;
+            } else {
+                $btn = '<a href="javascript:void(0);"  onclick="functionShowData(\'' . $row->id . '\');" class="btn btn-warning btn-xs disabled" style="margin-right:4px;" title="Edit Data"><i class="fas fa-edit"></i></a>';
+                $btn .= '<a href="javascript:void(0);" onclick="functionDeleteData(\'' . $row->id . '\');" class="btn btn-danger btn-xs disabled" style="margin-right:4px;" title="Hapus Data"><i class="fas fa-trash-alt"></i></a>';
+                return $btn;
             }
         })->rawColumns(['aksi'])->make(true);
     }

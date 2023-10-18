@@ -52,6 +52,7 @@
     function functionCreateData() {
         $('#standard-modal').modal('show');
         $('#modal-title').html('Tambah Data');
+        $('#simpan-data').html('Simpan');
         $('#id_kd_wil').prop('disabled', false);
     }
 
@@ -76,6 +77,7 @@
             success: function(response) {
                 $('#standard-modal').modal('show');
                 $('#modal-title').html('Edit Data');
+                $('#simpan-data').html('Update');
                 $('#id_kd_wil').val(response.result.id_kd_wilayah).change();
                 $('#id_kd_wil').prop('disabled', true);
                 $('#nm_wil').val(response.result.nm_wilayah);

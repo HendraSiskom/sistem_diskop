@@ -41,6 +41,7 @@
     function functionCreateData() {
         $('#standard-modal').modal('show');
         $('#modal-title').html('Tambah Data');
+        $('#simpan-data').html('Simpan');
     }
 
     //untuk membersihkan data yang sudah ditutup
@@ -63,6 +64,7 @@
             success: function(response) {
                 $('#standard-modal').modal('show');
                 $('#modal-title').html('Edit Data');
+                $('#simpan-data').html('Update');
                 $('#kode').val(response.result.kode);
                 id_s = id
             }
