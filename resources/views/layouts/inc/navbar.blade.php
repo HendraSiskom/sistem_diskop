@@ -46,6 +46,21 @@
                         <span> Reporting Output </span>
                     </a>
                 </li>
+
+                <li class="menu-title">Menu Master </li>
+                <li>
+                    <a href="{{ route('listbarang.index') }}">
+                        <i class="mdi mdi-view-dashboard-outline"></i>
+                        <span> List Barang </span>
+                    </a>
+                </li>
+                <li class="menu-title">Transaksi </li>
+                {{-- <li>
+                    <a href="{{ route('transaksi.index') }}">
+                        <i class="mdi mdi-view-dashboard-outline"></i>
+                        <span> Transaksi Barang </span>
+                    </a>
+                </li> --}}
             </ul>
         </div>
         <!-- End Sidebar -->

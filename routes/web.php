@@ -2,12 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ListData\ListBarangController;
 use App\Http\Controllers\Utility\PenggunaController;
 use App\Http\Controllers\Utility\PeranController;
 use App\Http\Controllers\Utility\ProfilController;
 use App\Http\Controllers\MasterData\KdWilayahController;
 use App\Http\Controllers\MasterData\WilayahController;
 use App\Http\Controllers\ReportingOutputController;
+use App\Http\Controllers\Transaksi\TransaksiController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -54,7 +58,25 @@ Route::group(['middleware' => 'auth', 'auth.session'], function () {
         Route::post('wilayah/load_data', [WilayahController::class, 'show'])->name('wilayah.load_data');
     });
 
-
     // reporting output
     Route::resource('reporting_output', ReportingOutputController::class);
+
+    // Lis barang
+    Route::group(['prefix' => 'list_data'], function () {
+        Route::resource('listbarang', ListBarangController::class);
+        Route::post('listbarang/listbarang', [ListBarangController::class, 'list_barang'])->name('listbarang.list_barang');
+        Route::post('listbarang/simpanbarang', [ListBarangController::class, 'simpanbarang'])->name('listbarang.simpanbarang');
+        Route::post('listbarang/editbarang', [ListBarangController::class, 'editbarang'])->name('listbarang.editbarang');
+        Route::post('listbarang/hapusbarang', [ListBarangController::class, 'hapusbarang'])->name('listbarang.hapusbarang');
+    });
+
+    // Transaksi Barang
+    Route::group(['prefix' => 'transaksi_data'], function () {
+        Route::resource('transaksi', TransaksiController::class);
+        Route::post('transaksi/listbarang', [TransaksiController::class, 'listbarang'])->name('transaksi.listbarang');
+        Route::post('transaksi/simpanbarang', [TransaksiController::class, 'simpanbarang'])->name('transaksi.simpanbarang');
+        Route::post('transaksi/wherelistbarang', [TransaksiController::class, 'wherelistbarang'])->name('transaksi.wherelistbarang');
+        Route::post('transaksi/updatebarang', [TransaksiController::class, 'updatebarang'])->name('transaksi.updatebarang');
+        Route::post('transaksi/hapusbarang', [TransaksiController::class, 'hapusbarang'])->name('transaksi.hapusbarang');
+    });
 });
