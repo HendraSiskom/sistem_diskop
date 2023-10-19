@@ -55,12 +55,12 @@
                     </a>
                 </li>
                 <li class="menu-title">Transaksi </li>
-                {{-- <li>
+                <li>
                     <a href="{{ route('transaksi.index') }}">
                         <i class="mdi mdi-view-dashboard-outline"></i>
                         <span> Transaksi Barang </span>
                     </a>
-                </li> --}}
+                </li>
             </ul>
         </div>
         <!-- End Sidebar -->
